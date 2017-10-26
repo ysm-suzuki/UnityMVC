@@ -42,7 +42,7 @@ namespace UnityMVC
         {
             return (Position)base.Clone();
         }
-        
+
         public UnityEngine.Vector2 ToVector2()
         {
             return new UnityEngine.Vector2(x, y);
@@ -52,6 +52,25 @@ namespace UnityMVC
         {
             return new UnityEngine.Vector3(x, y, 0);
         }
+
+
+        public static Position operator +(Position point1, Position point2)
+        {
+            return new Position
+            {
+                x = point1.x + point2.x,
+                y = point1.y + point2.y,
+            };
+        }
+        public static Position operator -(Position point1, Position point2)
+        {
+            return new Position
+            {
+                x = point1.x - point2.x,
+                y = point1.y - point2.y,
+            };
+        }
+
 
         public byte[] ToBytes()
         {
