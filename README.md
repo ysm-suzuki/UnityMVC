@@ -1,2 +1,2 @@
 # UnityMVC
-The Observer pattern fr unity
+The observer pattern for unity
