@@ -1,45 +1,48 @@
 ﻿using UnityEngine;
 
-public class TouchInputPorter : InputPorter
+namespace UnityMVC
 {
-    private Controller _currentTarget = null;
-
-    public override void Tick(float delta)
+    public class TouchInputPorter : InputPorter
     {
-        base.Tick(delta);
+        private Controller _currentTarget = null;
 
-        if (Input.touchCount > 0)
+        public override void Tick(float delta)
         {
-            var touch = Input.GetTouch(0);
-            var position = touch.position;
+            base.Tick(delta);
 
-            switch (touch.phase)
+            if (Input.touchCount > 0)
             {
-                case TouchPhase.Began:
-                { 
-                    Vector2 worldPoint = Camera.main.ScreenToWorldPoint(position);
-                    RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
+                var touch = Input.GetTouch(0);
+                var position = touch.position;
 
-                    if (hit.collider != null)
-                    {
-                        _currentTarget = hit.collider.gameObject.GetComponent<Controller>();
-                        _currentTarget.BeginTouching(position);
-                    }
-                    break;
-                }
-                case TouchPhase.Moved:
-                { 
-                    if (_currentTarget != null)
-                        _currentTarget.InTouching(position, delta);
-                    break;
-                }
-                case TouchPhase.Ended:
-                { 
-                    if (_currentTarget != null)
-                        _currentTarget.FinishTouching(position, delta);
+                switch (touch.phase)
+                {
+                    case TouchPhase.Began:
+                        {
+                            Vector2 worldPoint = Camera.main.ScreenToWorldPoint(position);
+                            RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
 
-                    _currentTarget = null;
-                    break;
+                            if (hit.collider != null)
+                            {
+                                _currentTarget = hit.collider.gameObject.GetComponent<Controller>();
+                                _currentTarget.BeginTouching(position);
+                            }
+                            break;
+                        }
+                    case TouchPhase.Moved:
+                        {
+                            if (_currentTarget != null)
+                                _currentTarget.InTouching(position, delta);
+                            break;
+                        }
+                    case TouchPhase.Ended:
+                        {
+                            if (_currentTarget != null)
+                                _currentTarget.FinishTouching(position, delta);
+
+                            _currentTarget = null;
+                            break;
+                        }
                 }
             }
         }

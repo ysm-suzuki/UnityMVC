@@ -1,9 +1,10 @@
-﻿using UnityEngine;
-
-public class InputPorter
+﻿namespace UnityMVC
 {
-    virtual public void Tick(float delta)
+    public class InputPorter
     {
+        virtual public void Tick(float delta)
+        {
 
+        }
     }
 }
