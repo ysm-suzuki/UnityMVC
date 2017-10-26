@@ -6,7 +6,7 @@ namespace UnityMVC
         public delegate void EventHandler();
         public event EventHandler OnPositionUpdated;
 
-        private Position _position = Point.Create();
+        private Position _position = Position.Create();
 
         public Position position
         {

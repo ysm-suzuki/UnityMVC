@@ -1,7 +1,8 @@
-﻿
+﻿using Atagoal.Core;
+
 namespace UnityMVC
 {
-    public class Position : Atagoal.Core.Point
+    public class Position : Point
     {
         public static Position Create(UnityEngine.Vector3 vector3)
         {
@@ -13,7 +14,7 @@ namespace UnityMVC
         }
         public static Position Create(byte[] bytes)
         {
-            UnityEngine.Debug.Assert(bytes.Length == GetBytesSize(), "Invalid bytes size.");
+            UnityEngine.Debug.Assert(bytes.Length == ByteSize, "Invalid bytes size.");
 
             int head = 0;
             return new Position
@@ -21,6 +22,25 @@ namespace UnityMVC
                 x = System.BitConverter.ToSingle(bytes, head),
                 y = System.BitConverter.ToSingle(bytes, head + 4),
             };
+        }
+
+        new public static Position Create()
+        {
+            var basePoint = Point.Create();
+            return new Position { x = basePoint.x, y = basePoint.y };
+        }
+        new public static Position Create(float x, float y)
+        {
+            return new Position { x = x, y = y };
+        }
+        new public static Position CreateInvalidPoint()
+        {
+            var basePoint = Point.CreateInvalidPoint();
+            return new Position { x = basePoint.x, y = basePoint.y };
+        }
+        new public Position Clone()
+        {
+            return (Position)base.Clone();
         }
         
         public UnityEngine.Vector2 ToVector2()
@@ -35,8 +55,8 @@ namespace UnityMVC
 
         public byte[] ToBytes()
         {
-            var xBytes = System.BitConverter.GetBytes(_x);
-            var yBytes = System.BitConverter.GetBytes(_y);
+            var xBytes = System.BitConverter.GetBytes(x);
+            var yBytes = System.BitConverter.GetBytes(y);
             return new byte[8]
             {
                 xBytes[0],
@@ -50,11 +70,14 @@ namespace UnityMVC
             };
         }
 
-        public static int GetBytesSize()
+        public static int ByteSize
         {
-            return
-                4 +     // x as float
-                4;      // y as float
+            get
+            {
+                return
+                    4 +     // x as float
+                    4;      // y as float
+            }
         }
     }
 }
