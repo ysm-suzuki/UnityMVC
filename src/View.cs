@@ -45,13 +45,31 @@ namespace UnityMVC
 
         public void SetParent(GameObject parent)
         {
+            RectTransform rectTransform = GetRoot().GetComponent<RectTransform>();
+
             var position = GetRoot().transform.localPosition;
             var rotation = GetRoot().transform.localRotation;
             var scale = GetRoot().transform.localScale;
+
+            Vector2 anchoredPosition = Vector2.zero;
+            Vector2 sizeDelta = Vector2.zero;
+            if (rectTransform != null)
+            {
+                anchoredPosition = rectTransform.anchoredPosition;
+                sizeDelta = rectTransform.sizeDelta;
+            }
+
             GetRoot().transform.SetParent(parent.transform);
+
             GetRoot().transform.localPosition = position;
             GetRoot().transform.localRotation = rotation;
             GetRoot().transform.localScale = scale;
+
+            if (rectTransform != null)
+            {
+                rectTransform.anchoredPosition = anchoredPosition;
+                rectTransform.sizeDelta = sizeDelta;
+            }
         }
 
 
