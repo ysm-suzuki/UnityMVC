@@ -43,6 +43,11 @@ namespace UnityMVC
             return Position.Create(x, y);
         }
 
+        public Position()
+        {
+            x = 0;
+            y = 0;
+        }
         public Position(float argX, float argY)
         {
             x = argX;
