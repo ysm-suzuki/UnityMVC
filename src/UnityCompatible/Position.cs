@@ -40,7 +40,13 @@ namespace UnityMVC
         }
         new public Position Clone()
         {
-            return (Position)base.Clone();
+            return Position.Create(x, y);
+        }
+
+        public Position(float argX, float argY)
+        {
+            x = argX;
+            y = argY;
         }
 
         public UnityEngine.Vector2 ToVector2()
@@ -68,6 +74,23 @@ namespace UnityMVC
             {
                 x = point1.x - point2.x,
                 y = point1.y - point2.y,
+            };
+        }
+        public static Position operator *(Position position, float scale)
+        {
+            return new Position
+            {
+                x = position.x * scale,
+                y = position.y * scale
+            };
+        }
+
+        public static Position operator /(Position position, float scale)
+        {
+            return new Position
+            {
+                x = position.x / scale,
+                y = position.y / scale
             };
         }
 
