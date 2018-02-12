@@ -28,7 +28,8 @@ namespace UnityMVC
             if (_isDetached)
                 return;
 
-            _model.OnPositionUpdated -= UpdatePosition;
+            if (_model != null)
+                _model.OnPositionUpdated -= UpdatePosition;
 
             GameObject.Destroy(GetRoot());
             _isDetached = true;
