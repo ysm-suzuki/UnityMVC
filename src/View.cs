@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace UnityMVC
 {
@@ -11,10 +12,11 @@ namespace UnityMVC
         [SerializeField]
         protected Animation _animation = null;
 
-
-        protected Model _model = null;
-
-        private bool _isDetached = false;
+        virtual public void Initialize()
+        {
+            isDetached = false;
+            model = null;
+        }
 
         public GameObject GetRoot()
         {
@@ -23,16 +25,23 @@ namespace UnityMVC
                 : gameObject;
         }
 
-        public void Detach()
+        virtual public void Detach()
         {
-            if (_isDetached)
+            if (isDetached)
                 return;
 
-            if (_model != null)
-                _model.OnPositionUpdated -= UpdatePosition;
+            DepthManager.Unregister(GetRoot());
+
+            if (model != null)
+                model.OnPositionUpdated -= UpdatePosition;
+
+            foreach (var view in _linkedViews)
+            {
+                view.Detach();
+            }
 
             GameObject.Destroy(GetRoot());
-            _isDetached = true;
+            isDetached = true;
         }
 
         public static T Attach<T>(string prefabPath) where T : View
@@ -43,6 +52,15 @@ namespace UnityMVC
             Debug.Assert(gameObject != null, "prefab : " + prefabPath + " failed in Instantiate().");
             var view = gameObject.GetComponent<T>();
             Debug.Assert(view != null, "prefab : " + prefabPath + " has no view conponents.");
+            view.Initialize();
+            DepthManager.Register(view.GetRoot());
+            return view;
+        }
+
+        public static T Attach<T>(string prefabPath, GameObject parent) where T : View
+        {
+            var view = Attach<T>(prefabPath);
+            view.SetParent(parent);
             return view;
         }
 
@@ -78,15 +96,62 @@ namespace UnityMVC
 
         public void SetModel<T>(T model) where T : Model
         {
-            _model = model;
-
-            _model.OnPositionUpdated += UpdatePosition;
+            this.model = model;
+            model.OnPositionUpdated += UpdatePosition;
         }
 
 
         protected void UpdatePosition()
         {
-            GetRoot().transform.localPosition = _model.position.ToVector3();
+            GetRoot().transform.localPosition = model.position.ToVector3();
+        }
+
+
+
+        // ======================================= linker
+        protected List<View> _linkedViews = new List<View>();
+        public void Link(View targtet)
+        {
+            _linkedViews.Add(targtet);
+        }
+
+
+        // ======================================= depth
+        private static readonly float DepthMargin = 0.15f;
+        private static UIDepthManager DepthManager = new UIDepthManager();
+        public void MoveToNearest()
+        {
+            var nearestZ = DepthManager.nearestZ;
+            nearestZ -= DepthMargin;
+            var currentPosition = GetRoot().gameObject.transform.position;
+            GetRoot().gameObject.transform.position = new Vector3(
+                currentPosition.x,
+                currentPosition.y,
+                nearestZ);
+        }
+
+        public static void MoveThemToNearest(List<View> views)
+        {
+            var nearestZ = DepthManager.nearestZ;
+            nearestZ -= DepthMargin;
+            foreach (var view in views)
+            {
+                var currentPosition = view.GetRoot().gameObject.transform.position;
+                view.GetRoot().gameObject.transform.position = new Vector3(
+                    currentPosition.x,
+                    currentPosition.y,
+                    nearestZ);
+            }
+        }
+
+        // ======================================== accessors
+        public Model model
+        {
+            get; protected set;
+        }
+        public bool isDetached
+        {
+            get; protected set;
         }
 
         // ======================================== animation
@@ -110,6 +175,39 @@ namespace UnityMVC
         private void OnAnimationFinished(string animationName)
         {
             _animationCallCenter.Call(animationName);
+        }
+    }
+
+
+
+    public class UIDepthManager
+    {
+        private List<GameObject> _targets = new List<GameObject>();
+
+        public void Register(GameObject target)
+        {
+            if (_targets.Contains(target)) return;
+            _targets.Add(target);
+        }
+
+        public void Unregister(GameObject target)
+        {
+            if (!_targets.Contains(target)) return;
+            _targets.Remove(target);
+        }
+
+        public float nearestZ
+        {
+            get
+            {
+                float nearest = float.MaxValue;
+                foreach (var target in _targets)
+                {
+                    var z = target.transform.position.z;
+                    if (nearest > z) nearest = z;
+                }
+                return nearest;
+            }
         }
     }
 }
