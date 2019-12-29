@@ -144,6 +144,11 @@ namespace UnityMVC
             }
         }
 
+        public static void ClearDepthManager(bool logRemainingTargets = false)
+        {
+            DepthManager.Clear(logRemainingTargets);
+        }
+
         // ======================================== accessors
         public Model model
         {
@@ -183,17 +188,59 @@ namespace UnityMVC
     public class UIDepthManager
     {
         private List<GameObject> _targets = new List<GameObject>();
+        private List<string> _targetNames = new List<string>();
+
 
         public void Register(GameObject target)
         {
             if (_targets.Contains(target)) return;
             _targets.Add(target);
+
+            if (!_targetNames.Contains(target.name))
+            {
+                _targetNames.Add(target.name);
+            }
         }
 
         public void Unregister(GameObject target)
         {
             if (!_targets.Contains(target)) return;
             _targets.Remove(target);
+            if (_targetNames.Contains(target.name))
+            {
+                _targetNames.Remove(target.name);
+            }
+        }
+
+        public List<string> GetRegisteredTargetNames()
+        {
+            var result = new List<string>();
+            foreach(var name in _targetNames)
+            {
+                result.Add(name);
+            }
+            return result;
+        }
+
+        public void Clear(bool logRemainingTargets = false)
+        {
+            if (logRemainingTargets)
+            {
+                LogRemainingTargets();
+            }
+
+            _targets = new List<GameObject>();
+        }
+
+        public void LogRemainingTargets()
+        {
+            if (GetRegisteredTargetNames().Count == 0) return;
+            var log = "";
+            foreach (var name in GetRegisteredTargetNames())
+            {
+                log += name + "\n";
+            }
+            Debug.Log(log);
         }
 
         public float nearestZ
