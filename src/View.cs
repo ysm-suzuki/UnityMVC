@@ -30,8 +30,6 @@ namespace UnityMVC
             if (isDetached)
                 return;
 
-            DepthManager.Unregister(GetRoot());
-
             if (model != null)
                 model.OnPositionUpdated -= UpdatePosition;
 
@@ -53,7 +51,6 @@ namespace UnityMVC
             var view = gameObject.GetComponent<T>();
             Debug.Assert(view != null, "prefab : " + prefabPath + " has no view conponents.");
             view.Initialize();
-            DepthManager.Register(view.GetRoot());
             return view;
         }
 
@@ -115,40 +112,6 @@ namespace UnityMVC
             _linkedViews.Add(targtet);
         }
 
-
-        // ======================================= depth
-        private static readonly float DepthMargin = 0.15f;
-        private static UIDepthManager DepthManager = new UIDepthManager();
-        public void MoveToNearest()
-        {
-            var nearestZ = DepthManager.nearestZ;
-            nearestZ -= DepthMargin;
-            var currentPosition = GetRoot().gameObject.transform.position;
-            GetRoot().gameObject.transform.position = new Vector3(
-                currentPosition.x,
-                currentPosition.y,
-                nearestZ);
-        }
-
-        public static void MoveThemToNearest(List<View> views)
-        {
-            var nearestZ = DepthManager.nearestZ;
-            nearestZ -= DepthMargin;
-            foreach (var view in views)
-            {
-                var currentPosition = view.GetRoot().gameObject.transform.position;
-                view.GetRoot().gameObject.transform.position = new Vector3(
-                    currentPosition.x,
-                    currentPosition.y,
-                    nearestZ);
-            }
-        }
-
-        public static void ClearDepthManager(bool logRemainingTargets = false)
-        {
-            DepthManager.Clear(logRemainingTargets);
-        }
-
         // ======================================== accessors
         public Model model
         {
@@ -180,81 +143,6 @@ namespace UnityMVC
         private void OnAnimationFinished(string animationName)
         {
             _animationCallCenter.Call(animationName);
-        }
-    }
-
-
-
-    public class UIDepthManager
-    {
-        private List<GameObject> _targets = new List<GameObject>();
-        private List<string> _targetNames = new List<string>();
-
-
-        public void Register(GameObject target)
-        {
-            if (_targets.Contains(target)) return;
-            _targets.Add(target);
-
-            if (!_targetNames.Contains(target.name))
-            {
-                _targetNames.Add(target.name);
-            }
-        }
-
-        public void Unregister(GameObject target)
-        {
-            if (!_targets.Contains(target)) return;
-            _targets.Remove(target);
-            if (_targetNames.Contains(target.name))
-            {
-                _targetNames.Remove(target.name);
-            }
-        }
-
-        public List<string> GetRegisteredTargetNames()
-        {
-            var result = new List<string>();
-            foreach(var name in _targetNames)
-            {
-                result.Add(name);
-            }
-            return result;
-        }
-
-        public void Clear(bool logRemainingTargets = false)
-        {
-            if (logRemainingTargets)
-            {
-                LogRemainingTargets();
-            }
-
-            _targets = new List<GameObject>();
-        }
-
-        public void LogRemainingTargets()
-        {
-            if (GetRegisteredTargetNames().Count == 0) return;
-            var log = "";
-            foreach (var name in GetRegisteredTargetNames())
-            {
-                log += name + "\n";
-            }
-            Debug.Log(log);
-        }
-
-        public float nearestZ
-        {
-            get
-            {
-                float nearest = float.MaxValue;
-                foreach (var target in _targets)
-                {
-                    var z = target.transform.position.z;
-                    if (nearest > z) nearest = z;
-                }
-                return nearest;
-            }
         }
     }
 }
