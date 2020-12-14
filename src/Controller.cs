@@ -16,9 +16,12 @@ namespace UnityMVC
         public delegate void PositionEventHandler(Vector3 position);
         public event PositionEventHandler OnTouchBegan;
         public event PositionEventHandler OnTouchFinished;
+        public event PositionEventHandler OnSecondaryTouchBegan;
+        public event PositionEventHandler OnSecondaryTouchFinished;
 
         public delegate void DragEventHandler(Vector3 position, float duration);
         public event DragEventHandler OnTouchMoved;
+        public event DragEventHandler OnSecondaryTouchMoved;
 
 
         private Vector3 _originalTouchPoint = Vector3.zero;
@@ -26,29 +29,53 @@ namespace UnityMVC
         private float _touchDurationSecond = 0;
 
         // ========================== called by input porter
-        public void BeginTouching(Vector3 position)
+        public void BeginTouching(Vector3 position, bool isSecondary = false)
         {
-            if (OnTouchBegan != null)
-                OnTouchBegan(position);
+            if (isSecondary)
+            {
+                if (OnSecondaryTouchBegan != null)
+                    OnSecondaryTouchBegan(position);
+            }
+            else
+            {
+                if (OnTouchBegan != null)
+                    OnTouchBegan(position);
+            }
 
             _originalTouchPoint = position;
             _oldTouchPoint = position;
             _touchDurationSecond = 0;
         }
 
-        public void InTouching(Vector3 position, float delta)
+        public void InTouching(Vector3 position, float delta, bool isSecondary = false)
         {
-            if (OnTouchMoved != null)
-                OnTouchMoved(position - _oldTouchPoint, delta);
+            if (isSecondary)
+            {
+                if (OnSecondaryTouchMoved != null)
+                    OnSecondaryTouchMoved(position - _oldTouchPoint, delta);
+            }
+            else
+            {
+                if (OnTouchMoved != null)
+                    OnTouchMoved(position - _oldTouchPoint, delta);
+            }
 
             _oldTouchPoint = position;
             _touchDurationSecond += delta;
         }
 
-        public void FinishTouching(Vector3 position, float delta)
+        public void FinishTouching(Vector3 position, float delta, bool isSecondary = false)
         {
-            if (OnTouchFinished != null)
-                OnTouchFinished(position);
+            if (isSecondary)
+            {
+                if (OnSecondaryTouchFinished != null)
+                    OnSecondaryTouchFinished(position);
+            }
+            else
+            {
+                if (OnTouchFinished != null)
+                    OnTouchFinished(position);
+            }
 
             _oldTouchPoint = position;
             _touchDurationSecond += delta;

@@ -61,6 +61,22 @@ namespace UnityMVC
             return view;
         }
 
+        public static T Attach<T>(GameObject parent) where T : View
+        {
+            var root = new GameObject(typeof(T).ToString());
+            root.transform.parent = parent.transform;
+            var view = root.AddComponent<T>();
+            return (T)view.InitializeTransform();
+        }
+
+        public View InitializeTransform()
+        {
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+            transform.localScale = Vector3.one;
+            return this;
+        }
+
         public void SetParent(GameObject parent)
         {
             RectTransform rectTransform = GetRoot().GetComponent<RectTransform>();

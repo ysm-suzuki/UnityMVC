@@ -2,6 +2,6 @@ namespace UnityMVC
 {
     public class Version
     {
-        public static string Code = "0.0.3";
+        public static string Code = "0.0.4";
     }
 }
