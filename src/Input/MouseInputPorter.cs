@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace UnityMVC
 {
@@ -9,7 +10,7 @@ namespace UnityMVC
 
         private bool _oldClick = false;
         private bool _oldSecondaryClick = false;
-        private Controller _currentTarget = null;
+        private List<Controller> _currentTargets = new List<Controller>();
 
         public override void Tick(float delta)
         {
@@ -22,49 +23,67 @@ namespace UnityMVC
             if (currentClick && !_oldClick)
             {
                 Vector2 worldPoint = Camera.main.ScreenToWorldPoint(position);
-                RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
+                var hits = Physics2D.RaycastAll(worldPoint, Vector2.zero);
 
-                if (hit.collider != null)
+                foreach (var hit in hits)
                 {
-                    _currentTarget = hit.collider.gameObject.GetComponent<Controller>();
-                    _currentTarget.BeginTouching(position);
+                    if (hit.collider != null)
+                    {
+                        var target = hit.collider.gameObject.GetComponent<Controller>();
+                        target.BeginTouching(position);
+                        _currentTargets.Add(target);
+                        if (!target.relayTouchEvents) break;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
             else if (currentClick && _oldClick)
             {
-                if (_currentTarget != null)
-                    _currentTarget.InTouching(position, delta);
+                foreach (var target in _currentTargets)
+                    target.InTouching(position, delta);
             }
             else if (!currentClick && _oldClick)
             {
-                if (_currentTarget != null)
-                    _currentTarget.FinishTouching(position, delta);
-
-                _currentTarget = null;
+                foreach (var target in _currentTargets)
+                    target.FinishTouching(position, delta);
+                _currentTargets.Clear();
             }
+
+
 
             if (secondaryClick && !_oldSecondaryClick)
             {
                 Vector2 worldPoint = Camera.main.ScreenToWorldPoint(position);
-                RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
+                var hits = Physics2D.RaycastAll(worldPoint, Vector2.zero);
 
-                if (hit.collider != null)
+                foreach (var hit in hits)
                 {
-                    _currentTarget = hit.collider.gameObject.GetComponent<Controller>();
-                    _currentTarget.BeginTouching(position, true);
+                    if (hit.collider != null)
+                    {
+                        var target = hit.collider.gameObject.GetComponent<Controller>();
+                        target.BeginTouching(position, true);
+                        _currentTargets.Add(target);
+                        if (!target.relayTouchEvents) break;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
             else if (secondaryClick && _oldSecondaryClick)
             {
-                if (_currentTarget != null)
-                    _currentTarget.InTouching(position, delta, true);
+                foreach (var target in _currentTargets)
+                    target.InTouching(position, delta, true);
             }
             else if (!secondaryClick && _oldSecondaryClick)
             {
-                if (_currentTarget != null)
-                    _currentTarget.FinishTouching(position, delta, true);
-
-                _currentTarget = null;
+                foreach (var target in _currentTargets)
+                    target.FinishTouching(position, delta, true);
+                _currentTargets.Clear();
             }
 
             _oldClick = currentClick;

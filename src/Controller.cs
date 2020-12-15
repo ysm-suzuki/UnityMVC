@@ -23,6 +23,7 @@ namespace UnityMVC
         public event DragEventHandler OnTouchMoved;
         public event DragEventHandler OnSecondaryTouchMoved;
 
+        public bool relayTouchEvents = false;
 
         private Vector3 _originalTouchPoint = Vector3.zero;
         private Vector3 _oldTouchPoint = Vector3.zero;
