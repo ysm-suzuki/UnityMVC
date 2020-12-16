@@ -32,7 +32,23 @@ namespace UnityMVC
                         var target = hit.collider.gameObject.GetComponent<Controller>();
                         target.BeginTouching(position);
                         _currentTargets.Add(target);
-                        if (!target.relayTouchEvents) break;
+
+                        if (target.relayAllTouchEvents)
+                        {
+
+                        }
+                        else if (target.relayClickEvents)
+                        {
+
+                        }
+                        else if (target.relayTouchMoveEvents)
+                        {
+
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                     else
                     {
@@ -42,13 +58,19 @@ namespace UnityMVC
             }
             else if (currentClick && _oldClick)
             {
+                var index = 0;
                 foreach (var target in _currentTargets)
-                    target.InTouching(position, delta);
+                    if(index++ == 0
+                        || target.relayTouchMoveEvents)
+                        target.InTouching(position, delta);
             }
             else if (!currentClick && _oldClick)
             {
+                var index = 0;
                 foreach (var target in _currentTargets)
-                    target.FinishTouching(position, delta);
+                    if (index++ == 0
+                        || target.relayClickEvents)
+                        target.FinishTouching(position, delta);
                 _currentTargets.Clear();
             }
 
@@ -66,7 +88,23 @@ namespace UnityMVC
                         var target = hit.collider.gameObject.GetComponent<Controller>();
                         target.BeginTouching(position, true);
                         _currentTargets.Add(target);
-                        if (!target.relayTouchEvents) break;
+
+                        if (target.relayAllTouchEvents)
+                        {
+
+                        }
+                        else if (target.relayClickEvents)
+                        {
+
+                        }
+                        else if (target.relayTouchMoveEvents)
+                        {
+
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                     else
                     {
@@ -76,13 +114,19 @@ namespace UnityMVC
             }
             else if (secondaryClick && _oldSecondaryClick)
             {
+                var index = 0;
                 foreach (var target in _currentTargets)
-                    target.InTouching(position, delta, true);
+                    if (index++ == 0
+                        || target.relayTouchMoveEvents)
+                        target.InTouching(position, delta, true);
             }
             else if (!secondaryClick && _oldSecondaryClick)
             {
+                var index = 0;
                 foreach (var target in _currentTargets)
-                    target.FinishTouching(position, delta, true);
+                    if (index++ == 0
+                        || target.relayClickEvents)
+                        target.FinishTouching(position, delta, true);
                 _currentTargets.Clear();
             }
 

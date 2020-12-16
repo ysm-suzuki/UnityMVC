@@ -23,7 +23,9 @@ namespace UnityMVC
         public event DragEventHandler OnTouchMoved;
         public event DragEventHandler OnSecondaryTouchMoved;
 
-        public bool relayTouchEvents = false;
+        public bool relayAllTouchEvents = false;
+        public bool relayTouchMoveEvents = false;
+        public bool relayClickEvents = false;
 
         private Vector3 _originalTouchPoint = Vector3.zero;
         private Vector3 _oldTouchPoint = Vector3.zero;
@@ -48,16 +50,22 @@ namespace UnityMVC
             _touchDurationSecond = 0;
         }
 
-        public void InTouching(Vector3 position, float delta, bool isSecondary = false)
+        public void InTouching(
+            Vector3 position,
+            float delta,
+            bool isSecondary = false,
+            bool enableEvent = true)
         {
             if (isSecondary)
             {
-                if (OnSecondaryTouchMoved != null)
+                if (OnSecondaryTouchMoved != null
+                    && enableEvent)
                     OnSecondaryTouchMoved(position - _oldTouchPoint, delta);
             }
             else
             {
-                if (OnTouchMoved != null)
+                if (OnTouchMoved != null
+                    && enableEvent)
                     OnTouchMoved(position - _oldTouchPoint, delta);
             }
 
@@ -65,16 +73,22 @@ namespace UnityMVC
             _touchDurationSecond += delta;
         }
 
-        public void FinishTouching(Vector3 position, float delta, bool isSecondary = false)
+        public void FinishTouching(
+            Vector3 position,
+            float delta,
+            bool isSecondary = false,
+            bool enableEvent = true)
         {
             if (isSecondary)
             {
-                if (OnSecondaryTouchFinished != null)
+                if (OnSecondaryTouchFinished != null
+                    && enableEvent)
                     OnSecondaryTouchFinished(position);
             }
             else
             {
-                if (OnTouchFinished != null)
+                if (OnTouchFinished != null
+                    && enableEvent)
                     OnTouchFinished(position);
             }
 
