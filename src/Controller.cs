@@ -15,13 +15,15 @@ namespace UnityMVC
 
         public delegate void PositionEventHandler(Vector3 position);
         public event PositionEventHandler OnTouchBegan;
-        public event PositionEventHandler OnTouchFinished;
         public event PositionEventHandler OnSecondaryTouchBegan;
-        public event PositionEventHandler OnSecondaryTouchFinished;
 
         public delegate void DragEventHandler(Vector3 position, float duration);
         public event DragEventHandler OnTouchMoved;
         public event DragEventHandler OnSecondaryTouchMoved;
+
+        public delegate void HoldEventHandler(Vector3 position, float duration, float distance);
+        public event HoldEventHandler OnTouchFinished;
+        public event HoldEventHandler OnSecondaryTouchFinished;
 
         public bool relayAllTouchEvents = false;
         public bool relayTouchMoveEvents = false;
@@ -79,22 +81,22 @@ namespace UnityMVC
             bool isSecondary = false,
             bool enableEvent = true)
         {
+            _touchDurationSecond += delta;
+
             if (isSecondary)
             {
                 if (OnSecondaryTouchFinished != null
                     && enableEvent)
-                    OnSecondaryTouchFinished(position);
+                    OnSecondaryTouchFinished(position, _touchDurationSecond, (position - _originalTouchPoint).magnitude);
             }
             else
             {
                 if (OnTouchFinished != null
                     && enableEvent)
-                    OnTouchFinished(position);
+                    OnTouchFinished(position, _touchDurationSecond, (position - _originalTouchPoint).magnitude);
             }
 
             _oldTouchPoint = position;
-            _touchDurationSecond += delta;
-
 
             if ((position - _originalTouchPoint).magnitude < MaxClickPositionDistance)
             {
