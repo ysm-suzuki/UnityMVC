@@ -19,7 +19,7 @@ namespace UnityMVC
                 {
                     case TouchPhase.Began:
                         {
-                            Vector2 worldPoint = Camera.main.ScreenToWorldPoint(position);
+                            Vector2 worldPoint = _mainCamera.ScreenToWorldPoint(position);
                             RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
 
                             if (hit.collider != null)

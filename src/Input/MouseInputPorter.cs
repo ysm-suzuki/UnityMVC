@@ -22,8 +22,9 @@ namespace UnityMVC
 
             if (currentClick && !_oldClick)
             {
-                Vector2 worldPoint = Camera.main.ScreenToWorldPoint(position);
-                var hits = Physics2D.RaycastAll(worldPoint, Vector2.zero);
+                Vector2 worldPoint = _mainCamera.ScreenToWorldPoint(position);
+                RaycastHit2D[] hits = new RaycastHit2D[32];
+                Physics2D.RaycastNonAlloc(worldPoint, Vector2.zero, hits);
 
                 foreach (var hit in hits)
                 {
@@ -78,8 +79,9 @@ namespace UnityMVC
 
             if (secondaryClick && !_oldSecondaryClick)
             {
-                Vector2 worldPoint = Camera.main.ScreenToWorldPoint(position);
-                var hits = Physics2D.RaycastAll(worldPoint, Vector2.zero);
+                Vector2 worldPoint = _mainCamera.ScreenToWorldPoint(position);
+                RaycastHit2D[] hits = new RaycastHit2D[32];
+                Physics2D.RaycastNonAlloc(worldPoint, Vector2.zero, hits);
 
                 foreach (var hit in hits)
                 {
