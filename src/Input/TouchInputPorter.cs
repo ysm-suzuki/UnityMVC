@@ -15,16 +15,15 @@ namespace UnityMVC
                 var touch = Input.GetTouch(0);
                 var position = touch.position;
 
+                var targets = UpdateTargets(position);
+
                 switch (touch.phase)
                 {
                     case TouchPhase.Began:
                         {
-                            Vector2 worldPoint = _mainCamera.ScreenToWorldPoint(position);
-                            RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
-
-                            if (hit.collider != null)
+                            if (targets.Count > 0)
                             {
-                                _currentTarget = hit.collider.gameObject.GetComponent<Controller>();
+                                _currentTarget = targets[0];
                                 _currentTarget.BeginTouching(position);
                             }
                             break;
@@ -44,6 +43,10 @@ namespace UnityMVC
                             break;
                         }
                 }
+            }
+            else
+            {
+                ClearTargets();
             }
         }
     }

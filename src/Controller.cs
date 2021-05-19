@@ -12,6 +12,8 @@ namespace UnityMVC
         public delegate void EventHandler();
         public event EventHandler OnClicked;
         public event EventHandler OnLongTapped;
+        public event EventHandler OnPointerEnter;
+        public event EventHandler OnPointerExit;
 
         public delegate void PositionEventHandler(Vector3 position);
         public event PositionEventHandler OnTouchBegan;
@@ -110,6 +112,25 @@ namespace UnityMVC
                     if (OnLongTapped != null)
                         OnLongTapped();
                 }
+            }
+        }
+
+        private bool _target = false;
+        public bool target
+        {
+            get
+            {
+                return _target;
+            }
+            set
+            {
+                var enter = !_target && value;
+                var exit = _target && !value;
+                _target = value;
+                if (enter
+                    && OnPointerEnter != null) OnPointerEnter();
+                if (exit
+                    && OnPointerExit != null) OnPointerExit();
             }
         }
     }

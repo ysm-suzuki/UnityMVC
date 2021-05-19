@@ -20,41 +20,14 @@ namespace UnityMVC
             bool secondaryClick = !(currentClick || _oldClick) && Input.GetMouseButton(MouseInput2);
             var position = Input.mousePosition;
 
+            var targets = UpdateTargets(position);
+
             if (currentClick && !_oldClick)
             {
-                Vector2 worldPoint = _mainCamera.ScreenToWorldPoint(position);
-                RaycastHit2D[] hits = new RaycastHit2D[32];
-                Physics2D.RaycastNonAlloc(worldPoint, Vector2.zero, hits);
-
-                foreach (var hit in hits)
+                foreach(var target in targets)
                 {
-                    if (hit.collider != null)
-                    {
-                        var target = hit.collider.gameObject.GetComponent<Controller>();
-                        target.BeginTouching(position);
-                        _currentTargets.Add(target);
-
-                        if (target.relayAllTouchEvents)
-                        {
-
-                        }
-                        else if (target.relayClickEvents)
-                        {
-
-                        }
-                        else if (target.relayTouchMoveEvents)
-                        {
-
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    target.BeginTouching(position);
+                    _currentTargets.Add(target);
                 }
             }
             else if (currentClick && _oldClick)
@@ -79,39 +52,10 @@ namespace UnityMVC
 
             if (secondaryClick && !_oldSecondaryClick)
             {
-                Vector2 worldPoint = _mainCamera.ScreenToWorldPoint(position);
-                RaycastHit2D[] hits = new RaycastHit2D[32];
-                Physics2D.RaycastNonAlloc(worldPoint, Vector2.zero, hits);
-
-                foreach (var hit in hits)
+                foreach (var target in targets)
                 {
-                    if (hit.collider != null)
-                    {
-                        var target = hit.collider.gameObject.GetComponent<Controller>();
-                        target.BeginTouching(position, true);
-                        _currentTargets.Add(target);
-
-                        if (target.relayAllTouchEvents)
-                        {
-
-                        }
-                        else if (target.relayClickEvents)
-                        {
-
-                        }
-                        else if (target.relayTouchMoveEvents)
-                        {
-
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    target.BeginTouching(position, true);
+                    _currentTargets.Add(target);
                 }
             }
             else if (secondaryClick && _oldSecondaryClick)
