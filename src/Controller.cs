@@ -27,8 +27,6 @@ namespace UnityMVC
         public event HoldEventHandler OnTouchFinished;
         public event HoldEventHandler OnSecondaryTouchFinished;
 
-        public bool relayAllTouchEvents = false;
-        public bool relayTouchMoveEvents = false;
         public bool relayClickEvents = false;
 
         private Vector3 _originalTouchPoint = Vector3.zero;

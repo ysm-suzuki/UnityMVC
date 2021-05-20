@@ -28,23 +28,24 @@ namespace UnityMVC
                 {
                     target.BeginTouching(position);
                     _currentTargets.Add(target);
+                    if (!target.relayClickEvents) break;
                 }
             }
             else if (currentClick && _oldClick)
             {
-                var index = 0;
                 foreach (var target in _currentTargets)
-                    if(index++ == 0
-                        || target.relayTouchMoveEvents)
-                        target.InTouching(position, delta);
+                {
+                    target.InTouching(position, delta);
+                    if (!target.relayClickEvents) break;
+                }
             }
             else if (!currentClick && _oldClick)
             {
-                var index = 0;
                 foreach (var target in _currentTargets)
-                    if (index++ == 0
-                        || target.relayClickEvents)
-                        target.FinishTouching(position, delta);
+                {
+                    target.FinishTouching(position, delta);
+                    if (!target.relayClickEvents) break;
+                }
                 _currentTargets.Clear();
             }
 
@@ -56,23 +57,24 @@ namespace UnityMVC
                 {
                     target.BeginTouching(position, true);
                     _currentTargets.Add(target);
+                    if (!target.relayClickEvents) break;
                 }
             }
             else if (secondaryClick && _oldSecondaryClick)
             {
-                var index = 0;
                 foreach (var target in _currentTargets)
-                    if (index++ == 0
-                        || target.relayTouchMoveEvents)
-                        target.InTouching(position, delta, true);
+                {
+                    target.InTouching(position, delta, true);
+                    if (!target.relayClickEvents) break;
+                }
             }
             else if (!secondaryClick && _oldSecondaryClick)
             {
-                var index = 0;
                 foreach (var target in _currentTargets)
-                    if (index++ == 0
-                        || target.relayClickEvents)
-                        target.FinishTouching(position, delta, true);
+                {
+                    target.FinishTouching(position, delta, true);
+                    if (!target.relayClickEvents) break;
+                }
                 _currentTargets.Clear();
             }
 

@@ -32,25 +32,7 @@ namespace UnityMVC
                 {
                     var target = hit.collider.gameObject.GetComponent<Controller>();
                     target.target = true;
-                    result.Add(target);
-
-                    if (target.relayAllTouchEvents)
-                    {
-
-                    }
-                    else if (target.relayClickEvents)
-                    {
-
-                    }
-                    else if (target.relayTouchMoveEvents)
-                    {
-
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
+                    result.Add(target);                }
                 else
                 {
                     break;
