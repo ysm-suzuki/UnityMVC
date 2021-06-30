@@ -49,5 +49,13 @@ namespace UnityMVC
                 ClearTargets();
             }
         }
+
+        public override Position primaryPointerPosition
+        {
+            get
+            {
+                return new Position(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y);
+            }
+        }
     }
 }

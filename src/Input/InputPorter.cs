@@ -17,6 +17,14 @@ namespace UnityMVC
 
         }
 
+        virtual public Position primaryPointerPosition
+        {
+            get
+            {
+                return new Position();
+            }
+        }
+
         private List<Controller> _lastTargets = new List<Controller>();
         protected List<Controller> UpdateTargets(Vector3 position)
         {

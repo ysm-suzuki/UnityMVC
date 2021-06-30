@@ -81,5 +81,14 @@ namespace UnityMVC
             _oldClick = currentClick;
             _oldSecondaryClick = secondaryClick;
         }
+
+
+        public override Position primaryPointerPosition
+        {
+            get
+            {
+                return new Position(Input.mousePosition.x, Input.mousePosition.y);
+            }
+        }
     }
 }
