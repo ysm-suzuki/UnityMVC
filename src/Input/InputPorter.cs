@@ -6,8 +6,13 @@ namespace UnityMVC
 {
     public class InputPorter
     {
-        public InputPorter() {
+        public InputPorter()
+        {
             _mainCamera = Camera.main;
+        }
+        public void SetCamera(Camera camera)
+        {
+            _mainCamera = camera;
         }
 
         protected Camera _mainCamera;
